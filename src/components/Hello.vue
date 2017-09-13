@@ -1,31 +1,47 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
+    <input v-model="newTodo" v-on:keyup.enter="addNew" />
     <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
+        <li v-for="item in items" v-bind:class="{finish:item.isDone}" v-on:click="toggleDone(item)">
+            {{item.todo}}
+        </li>
     </ul>
   </div>
 </template>
 
 <script>
+import Store from '../storage.js'
 export default {
   name: 'hello',
-  data () {
+  data () { // same like as data: function() {}
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'This is todo list prod',
+      items: Store.fetch(),
+      newTodo: ''
+    }
+  },
+  methods: {
+    toggleDone: function (item) {
+      item.isDone = !item.isDone
+    },
+    addNew: function () {
+      console.log(this.newTodo.length)
+      if (this.newTodo.length) {
+        this.items.push({
+          todo: this.newTodo,
+          isDone: false
+        })
+        this.newTodo = ''
+      }
+    }
+  },
+  watch: { // 监听data值变化
+    items: {
+      handler: function (val, oldVal) {
+        Store.save(val)
+      },
+      deep: true
     }
   }
 }
@@ -38,13 +54,16 @@ h1, h2 {
 }
 
 ul {
-  list-style-type: none;
+  list-style-type: square;
   padding: 0;
 }
 
 li {
-  display: inline-block;
-  margin: 0 10px;
+
+}
+
+.finish {
+  text-decoration: line-through;
 }
 
 a {
