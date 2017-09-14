@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <input v-model="newTodo" v-on:keyup.enter="addNew" />
+    {{ fromheader }}
+    <input v-model="newTodo" v-on:keyup.enter="addNew" placeholder="add a new todo item" />
     <ul>
         <li v-for="item in items" v-bind:class="{finish:item.isDone}" v-on:click="toggleDone(item)">
             {{item.todo}}
@@ -18,22 +18,28 @@ export default {
     return {
       msg: 'This is todo list prod',
       items: Store.fetch(),
-      newTodo: ''
+      newTodo: '',
+      fromheader: ''
     }
   },
   methods: {
     toggleDone: function (item) {
       item.isDone = !item.isDone
+      this.items.sort(Store.sortItem)
     },
     addNew: function () {
-      console.log(this.newTodo.length)
       if (this.newTodo.length) {
         this.items.push({
           todo: this.newTodo,
           isDone: false
         })
+        this.items.sort(Store.sortItem)
         this.newTodo = ''
       }
+    },
+    clearOrder: function (msg) {
+      console.log(msg)
+      this.fromheader = 'clear list'
     }
   },
   watch: { // 监听data值变化

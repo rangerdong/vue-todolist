@@ -1,23 +1,28 @@
 <template>
-<div>
-  <h1>{{ msg }}</h1>
-  <button v-on:click="clickHeader" >头部按钮</button>
-</div>
+  <div class="header">
+    <h1>Todolist 总数：{{ total }}</h1>
+    <button v-on:click="clearList" >清除list</button>
+  </div>
 </template>
 <script>
 export default {
+  name: 'header',
+  props: ['total'],  // 子组件注册父组件传递的值
   data () {
-    msg: '点击之前'
+    return {
+      total: this.total
+    }
   },
   methods: {
-    clickHeader() {
-      this.msg = '点击之后'
+    clearList: function () {
+      this.$emit('listenChild', true)  // 向父组件发送消息
+      this.total = 0
     }
   }
 }
 </script>
 
-<style scoped="">
+<style scoped>
 h1 {
   font-weight: normal;
 }
