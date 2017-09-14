@@ -2,8 +2,8 @@
   <div id="app">
     <h1>{{ prod }}</h1>
     <img src="./assets/logo.png">
-    <header-todo total='1231421' v-on:listenChild="clearOrder"></header-todo> 
-    <router-view></router-view>
+    <header-todo v-bind:total="itemTotal" v-on:listenChild="clearOrder"></header-todo>
+    <router-view v-bind:destroy="isDestroy" v-on:changeItem="listenItem" v-on:sendItemLen="initItem"></router-view>
     <button v-on:click="getItems">获取route内的items</button>
 
   </div>
@@ -15,7 +15,9 @@ export default {
   name: 'app',
   data: function () {
     return {
-      prod: 'This is todolist prod'
+      prod: 'This is todolist prod',
+      itemTotal: 0,
+      isDestroy: false
     }
   },
   components: {HeaderTodo},
@@ -24,7 +26,21 @@ export default {
       console.log(this.items)
     },
     clearOrder: function (msg) {
-      if (msg === true) {}
+      if (msg === true) {
+        this.isDestroy = true
+      }
+    },
+    listenItem: function (msg) {
+      if (msg === 'increment') {
+        this.itemTotal += 1
+      } else if (msg === 'deduce') {
+        this.itemTotal -= 1
+      } else {
+        this.itemTotal = this.itemTotal
+      }
+    },
+    initItem: function (msg) {
+      this.itemTotal = msg
     }
   }
 }

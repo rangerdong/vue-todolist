@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    {{ fromheader }}
+    <h1>{{ destroy }}</h1>
     <input v-model="newTodo" v-on:keyup.enter="addNew" placeholder="add a new todo item" />
     <ul>
         <li v-for="item in items" v-bind:class="{finish:item.isDone}" v-on:click="toggleDone(item)">
@@ -14,13 +14,30 @@
 import Store from '../storage.js'
 export default {
   name: 'hello',
+  props: ['destroy'],  // 子组件注册父组件传递的值
+  events: {
+    'destroyItems': function () {
+      console.log(12314)
+    }
+  },
   data () { // same like as data: function() {}
     return {
       msg: 'This is todo list prod',
       items: Store.fetch(),
       newTodo: '',
-      fromheader: ''
+      fromheader: '321421'
     }
+  },
+  mounted () {
+    this.$emit('sendItemLen', this.items.length)
+    this.$on('destroyItem', function () {
+      console.log(12314)
+    })
+  },
+  created () {
+    this.$on('destroyItems', function () {
+      console.log(12314)
+    })
   },
   methods: {
     toggleDone: function (item) {
@@ -35,17 +52,23 @@ export default {
         })
         this.items.sort(Store.sortItem)
         this.newTodo = ''
+        this.$emit('changeItem', 'increment')
       }
-    },
-    clearOrder: function (msg) {
-      console.log(msg)
-      this.fromheader = 'clear list'
     }
   },
   watch: { // 监听data值变化
     items: {
       handler: function (val, oldVal) {
         Store.save(val)
+      },
+      deep: true
+    },
+    destroy: {
+      handler: function (val, oldVal) {
+        console.log(val)
+        if (val === true) {
+          this.items = []
+        }
       },
       deep: true
     }
