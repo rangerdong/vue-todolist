@@ -11,7 +11,6 @@ export default {
   methods: {
     clearList: function () {
       this.$emit('listenChild', true)  // 向父组件发送消息
-      this.total = 0
     }
   }
 }

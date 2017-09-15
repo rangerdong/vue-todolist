@@ -9,6 +9,11 @@ export default {
   },
   sortItem (a, b) {
     if ((a.isDone && b.isDone) || (!a.isDone && !b.isDone)) {
+      if (a.date > b.date) {
+        return 1
+      } else if (a.date < b.date) {
+        return -1
+      }
       return 0
     } else if (a.isDone && !b.isDone) {
       return 1

@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-    <h1>{{ destroy }}</h1>
     <input v-model="newTodo" v-on:keyup.enter="addNew" placeholder="add a new todo item" />
     <ul>
         <li v-for="item in items" v-bind:class="{finish:item.isDone}" v-on:click="toggleDone(item)">
@@ -15,11 +14,6 @@ import Store from '../storage.js'
 export default {
   name: 'hello',
   props: ['destroy'],  // 子组件注册父组件传递的值
-  events: {
-    'destroyItems': function () {
-      console.log(12314)
-    }
-  },
   data () { // same like as data: function() {}
     return {
       msg: 'This is todo list prod',
@@ -30,9 +24,6 @@ export default {
   },
   mounted () {
     this.$emit('sendItemLen', this.items.length)
-    this.$on('destroyItem', function () {
-      console.log(12314)
-    })
   },
   created () {
     this.$on('destroyItems', function () {

@@ -2,8 +2,16 @@
   <div id="app">
     <h1>{{ prod }}</h1>
     <img src="./assets/logo.png">
+    <router-view></router-view>
     <header-todo v-bind:total="itemTotal" v-on:listenChild="clearOrder"></header-todo>
-    <router-view v-bind:destroy="isDestroy" v-on:changeItem="listenItem" v-on:sendItemLen="initItem"></router-view>
+    <div class="hello">
+      <input v-model="newTodo" v-on:keyup.enter="addNew" placeholder="add a new todo item" />
+      <ul>
+        <li v-for="item in items" v-bind:class="{finish:item.isDone}" v-on:click="toggleDone(item)">
+          {{item.todo}}
+        </li>
+      </ul>
+    </div>
     <button v-on:click="getItems">获取route内的items</button>
 
   </div>
@@ -11,36 +19,56 @@
 
 <script>
 import HeaderTodo from './components/header'
+import Hello from './components/Hello'
+import Store from './storage'
 export default {
   name: 'app',
   data: function () {
     return {
       prod: 'This is todolist prod',
       itemTotal: 0,
-      isDestroy: false
+      isDestroy: false,
+      items: Store.fetch(),
+      newTodo: ''
     }
   },
-  components: {HeaderTodo},
+  mounted () {
+    this.itemTotal = Store.fetch().length
+  },
+  components: {HeaderTodo, Hello},
   methods: {
     getItems: function () {
       console.log(this.items)
     },
     clearOrder: function (msg) {
       if (msg === true) {
-        this.isDestroy = true
+        this.items = []
+        this.itemTotal = 0
       }
     },
-    listenItem: function (msg) {
-      if (msg === 'increment') {
+    toggleDone: function (item) {
+      item.isDone = !item.isDone
+      this.items.sort(Store.sortItem)
+    },
+    addNew: function () {
+      if (this.newTodo.length) {
+        this.items.push({
+          todo: this.newTodo,
+          isDone: false,
+          date: Date.parse(new Date())
+        })
+        this.items.sort(Store.sortItem)
+        this.newTodo = ''
         this.itemTotal += 1
-      } else if (msg === 'deduce') {
-        this.itemTotal -= 1
-      } else {
-        this.itemTotal = this.itemTotal
       }
-    },
-    initItem: function (msg) {
-      this.itemTotal = msg
+    }
+  },
+  watch: { // 监听data值变化
+    items: {
+      handler: function (val, oldVal) {
+        Store.save(val)
+      },
+      deep: true
     }
   }
 }
@@ -54,5 +82,25 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+h1, h2 {
+  font-weight: normal;
+}
+
+ul {
+  list-style-type: square;
+  padding: 0;
+}
+
+li {
+
+}
+
+.finish {
+  text-decoration: line-through;
+}
+
+a {
+  color: #42b983;
 }
 </style>
