@@ -21,6 +21,7 @@
 import HeaderTodo from './components/header'
 import Hello from './components/Hello'
 import Store from './storage'
+import Hub from './EventHub'
 export default {
   name: 'app',
   data: function () {
@@ -44,6 +45,7 @@ export default {
       if (msg === true) {
         this.items = []
         this.itemTotal = 0
+        Hub.$emit('destroyItems', true)
       }
     },
     toggleDone: function (item) {
